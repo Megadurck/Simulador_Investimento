@@ -17,13 +17,15 @@ O objetivo desta jornada é desenvolver habilidades práticas em análise de dad
 
 ## 📚 Projetos e Desafios
 
-Cada projeto está organizado em uma branch independente, preservando seus arquivos, documentação e histórico de desenvolvimento.
+Os projetos desenvolvidos durante o bootcamp estão organizados neste repositório, com seus respectivos arquivos e documentações.
 
-| Projeto | Branch | Descrição |
+Cada desafio também possui uma branch independente, permitindo acompanhar seu desenvolvimento e histórico sem misturar as implementações.
+
+| Projeto | Diretório | Branch |
 |---|---|---|
-| Simulador de Investimentos | `simulador-investimentos` | Ferramenta de simulação financeira e projeção de patrimônio. |
-| Declaração de Imposto de Renda | `desafio-declaracao-imposto` | Organização de informações para apoio à declaração de IR. |
-| Dashboard Xbox Game Pass | `dashboard-xbox-game-pass` | Análise de dados de vendas e assinaturas Xbox Game Pass. |
+| Simulador de Investimentos | `./` | `simulador-investimentos` |
+| Declaração de Imposto de Renda | `declaracao-imposto/` | `desafio-declaracao-imposto` |
+| Dashboard Xbox Game Pass | `Dashboard-vendas-Xbox/` | `dashboard-xbox-game-pass` |
 
 > Novos projetos serão adicionados a esta seção conforme o avanço do bootcamp.
 
