@@ -1,0 +1,784 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Porsche | Sales Intelligence</title>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+  --bg: #090909;
+  --panel: #151515;
+  --panel2: #1c1c1c;
+  --text: #f5f5f5;
+  --muted: #999;
+  --red: #d5001c;
+  --border: #303030;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+  height: 85px;
+  padding: 0 5%;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 5px;
+}
+
+.logo span { color: var(--red); }
+
+.header-right {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+main {
+  max-width: 1500px;
+  margin: auto;
+  padding: 35px 5%;
+}
+
+.eyebrow {
+  color: var(--red);
+  letter-spacing: 3px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+h1 {
+  font-size: clamp(30px, 4vw, 48px);
+  margin: 12px 0;
+  letter-spacing: -2px;
+}
+
+.subtitle { color: var(--muted); }
+
+.upload-area {
+  margin: 28px 0;
+  padding: 25px;
+  border: 1px dashed #555;
+  background: var(--panel);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+button, .upload-btn {
+  background: var(--red);
+  border: 0;
+  color: white;
+  padding: 13px 22px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .2s;
+}
+
+button:hover, .upload-btn:hover { background: #a90016; }
+
+input[type=file] { display: none; }
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.filter label, .mapping label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 9px;
+}
+
+select, input[type=date] {
+  width: 100%;
+  padding: 13px;
+  background: var(--panel2);
+  color: white;
+  border: 1px solid var(--border);
+  outline: none;
+}
+
+select:focus { border-color: var(--red); }
+
+.section-title {
+  font-size: 18px;
+  margin: 35px 0 18px;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 23px;
+  min-width: 0;
+}
+
+.kpi-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.kpi-value {
+  display: block;
+  font-size: clamp(22px, 3vw, 34px);
+  margin: 15px 0 8px;
+  font-weight: bold;
+}
+
+.kpi-detail { color: var(--muted); font-size: 12px; }
+
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.chart-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 24px;
+  min-width: 0;
+}
+
+.chart-card h3 {
+  font-size: 15px;
+  margin-top: 0;
+}
+
+.chart-container {
+  height: 290px;
+  position: relative;
+}
+
+.insights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.insight {
+  background: var(--panel);
+  border-left: 3px solid var(--red);
+  padding: 20px;
+  line-height: 1.7;
+}
+
+.insight strong { color: white; }
+
+.mapping {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  padding: 20px;
+  background: var(--panel);
+  margin: 20px 0;
+}
+
+.status {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.hidden { display: none !important; }
+
+footer {
+  border-top: 1px solid var(--border);
+  margin-top: 60px;
+  padding: 25px 5%;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+@media(max-width: 850px) {
+  .filters, .kpis { grid-template-columns: repeat(2,1fr); }
+  .charts { grid-template-columns: 1fr; }
+  .insights { grid-template-columns: 1fr; }
+}
+
+@media(max-width: 500px) {
+  .filters, .kpis, .mapping { grid-template-columns: 1fr; }
+  main { padding: 25px 4%; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">PORSCHE<span>.</span></div>
+  <div class="header-right">SALES INTELLIGENCE / BRAZIL</div>
+</header>
+
+<main>
+
+  <div class="eyebrow">BUSINESS INTELLIGENCE</div>
+  <h1>Sales Overview</h1>
+  <p class="subtitle">
+    Análise de performance comercial, tendências e comportamento de mercado.
+  </p>
+
+  <section class="upload-area">
+    <div>
+      <strong>Importar base de vendas</strong>
+      <p class="status" id="fileStatus">
+        Amostra fictícia carregada. Importe uma planilha Excel para substituí-la.
+      </p>
+    </div>
+
+    <label class="upload-btn">
+      IMPORTAR EXCEL
+      <input type="file" id="fileInput" accept=".xlsx,.xls">
+    </label>
+  </section>
+
+  <section id="mappingArea" class="hidden">
+    <h2 class="section-title">Configuração dos dados</h2>
+    <p class="status">
+      Associe cada indicador à coluna correspondente da planilha.
+    </p>
+    <div class="mapping" id="mapping"></div>
+    <button onclick="applyMapping()">APLICAR COLUNAS</button>
+  </section>
+
+  <h2 class="section-title">Filtros de análise</h2>
+
+  <section class="filters">
+    <div class="filter">
+      <label>MODELO PORSCHE</label>
+      <select id="modelFilter"><option value="">Todos os modelos</option></select>
+    </div>
+
+    <div class="filter">
+      <label>MODEL YEAR</label>
+      <select id="yearFilter"><option value="">Todos os anos</option></select>
+    </div>
+
+    <div class="filter">
+      <label>CITY</label>
+      <select id="cityFilter"><option value="">Todas as cidades</option></select>
+    </div>
+
+    <div class="filter">
+      <label>PAY METHOD</label>
+      <select id="payFilter"><option value="">Todos os pagamentos</option></select>
+    </div>
+  </section>
+
+  <button onclick="resetFilters()">LIMPAR FILTROS</button>
+
+  <h2 class="section-title">Performance comercial</h2>
+
+  <section class="kpis">
+    <div class="card">
+      <span class="kpi-label">Total de vendas</span>
+      <strong class="kpi-value" id="totalSales">—</strong>
+      <span class="kpi-detail">Unidades comercializadas</span>
+    </div>
+
+    <div class="card">
+      <span class="kpi-label">Receita total</span>
+      <strong class="kpi-value" id="revenue">—</strong>
+      <span class="kpi-detail">Valor registrado na base</span>
+    </div>
+
+    <div class="card">
+      <span class="kpi-label">Modelo líder</span>
+      <strong class="kpi-value" id="topModel">—</strong>
+      <span class="kpi-detail" id="topModelDetail">Mais vendido</span>
+    </div>
+
+    <div class="card">
+      <span class="kpi-label">Cidade líder</span>
+      <strong class="kpi-value" id="topCity">—</strong>
+      <span class="kpi-detail" id="topCityDetail">Maior volume de vendas</span>
+    </div>
+  </section>
+
+  <h2 class="section-title">Análise de mercado</h2>
+
+  <section class="charts">
+
+    <div class="chart-card">
+      <h3>Modelos mais vendidos</h3>
+      <div class="chart-container">
+        <canvas id="modelChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Vendas por cidade</h3>
+      <div class="chart-container">
+        <canvas id="cityChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Distribuição por Model Year</h3>
+      <div class="chart-container">
+        <canvas id="yearChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Métodos de pagamento</h3>
+      <div class="chart-container">
+        <canvas id="payChart"></canvas>
+      </div>
+    </div>
+
+  </section>
+
+  <h2 class="section-title">Inteligência comercial</h2>
+
+  <section class="insights" id="insights">
+    <div class="insight">
+      Importe a planilha para identificar o modelo líder em cada cidade.
+    </div>
+    <div class="insight">
+      Descubra qual ano-modelo apresenta maior volume de vendas.
+    </div>
+    <div class="insight">
+      Identifique os modelos mais populares em cada mercado.
+    </div>
+  </section>
+
+  <h2 class="section-title">Ranking de modelos por cidade</h2>
+
+  <div class="card" style="overflow-x:auto">
+    <table id="rankingTable" width="100%" cellspacing="0">
+      <thead>
+        <tr style="text-align:left;color:#999">
+          <th style="padding:12px">CIDADE</th>
+          <th>MODELO MAIS VENDIDO</th>
+          <th>UNIDADES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="3" style="padding:15px">
+          Aguardando importação da base.
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<footer>
+  PORSCHE SALES INTELLIGENCE · BUSINESS ANALYTICS
+</footer>
+
+<script>
+let originalData = [];
+let data = [];
+let charts = {};
+
+const fields = {
+  model: ["model", "modelo", "car model", "vehicle"],
+  year: ["model year", "year", "ano modelo", "ano"],
+  city: ["city", "cidade"],
+  pay: ["pay method", "payment method", "payment", "pagamento"],
+  price: ["price", "revenue", "sale price", "valor", "amount"]
+};
+
+const config = {
+  model: null,
+  year: null,
+  city: null,
+  pay: null,
+  price: null
+};
+
+function normalize(value) {
+  return String(value ?? "").trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function detectColumn(headers, keywords) {
+  return headers.find(h =>
+    keywords.some(k => normalize(h) === normalize(k))
+  ) || headers.find(h =>
+    keywords.some(k => normalize(h).includes(normalize(k)))
+  ) || "";
+}
+
+document.getElementById("fileInput").addEventListener("change", async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  try {
+    const buffer = await file.arrayBuffer();
+    const workbook = XLSX.read(buffer, {type:"array"});
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+    originalData = XLSX.utils.sheet_to_json(sheet, {
+      defval: "",
+      raw: false
+    });
+
+    if (!originalData.length) throw new Error("A planilha está vazia.");
+
+    const headers = Object.keys(originalData[0]);
+
+    Object.keys(config).forEach(key => {
+      config[key] = detectColumn(headers, fields[key]);
+    });
+
+    document.getElementById("fileStatus").textContent =
+      `${file.name} · ${originalData.length} registros carregados`;
+
+    renderMapping(headers);
+  } catch(error) {
+    alert("Erro ao importar: " + error.message);
+  }
+});
+
+function renderMapping(headers) {
+  const area = document.getElementById("mappingArea");
+  area.classList.remove("hidden");
+
+  const labels = {
+    model: "Modelo Porsche",
+    year: "Model Year",
+    city: "City",
+    pay: "Pay Method",
+    price: "Preço / Receita"
+  };
+
+  document.getElementById("mapping").innerHTML =
+    Object.entries(labels).map(([key,label]) => `
+      <div>
+        <label>${label}</label>
+        <select id="map_${key}">
+          <option value="">Não identificado</option>
+          ${headers.map(h =>
+            `<option value="${escapeHTML(h)}"
+              ${config[key] === h ? "selected":""}>
+              ${escapeHTML(h)}
+            </option>`
+          ).join("")}
+        </select>
+      </div>
+    `).join("");
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  })[c]);
+}
+
+function applyMapping() {
+  Object.keys(config).forEach(key => {
+    config[key] = document.getElementById("map_"+key).value || null;
+  });
+
+  if (!config.model || !config.city || !config.year || !config.pay) {
+    alert("Associe pelo menos Modelo, Ano, Cidade e Pagamento.");
+    return;
+  }
+
+  document.getElementById("mappingArea").classList.add("hidden");
+
+  ["model","year","city","pay"].forEach(key => {
+    document.getElementById(key+"Filter").onchange = updateDashboard;
+  });
+
+  populateFilters();
+  updateDashboard();
+}
+
+function populateFilters() {
+  const keys = [
+    ["model","modelFilter"],
+    ["year","yearFilter"],
+    ["city","cityFilter"],
+    ["pay","payFilter"]
+  ];
+
+  keys.forEach(([key,id]) => {
+    const values = [...new Set(
+      originalData.map(r => r[config[key]])
+        .filter(v => v !== "")
+    )].sort();
+
+    document.getElementById(id).innerHTML =
+      `<option value="">Todos</option>` +
+      values.map(v =>
+        `<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`
+      ).join("");
+  });
+}
+
+function getFilteredData() {
+  const filters = {
+    model: document.getElementById("modelFilter").value,
+    year: document.getElementById("yearFilter").value,
+    city: document.getElementById("cityFilter").value,
+    pay: document.getElementById("payFilter").value
+  };
+
+  return originalData.filter(row =>
+    Object.entries(filters).every(([key,value]) =>
+      !value || String(row[config[key]]) === value
+    )
+  );
+}
+
+function countBy(rows, key) {
+  const result = {};
+
+  rows.forEach(row => {
+    const value = row[key] || "Não informado";
+    result[value] = (result[value] || 0) + 1;
+  });
+
+  return Object.entries(result).sort((a,b) => b[1]-a[1]);
+}
+
+function money(value) {
+  return new Intl.NumberFormat("pt-BR", {
+    style:"currency",
+    currency:"BRL",
+    maximumFractionDigits:0
+  }).format(value);
+}
+
+function numeric(value) {
+  if (typeof value === "number") return value;
+
+  let s = String(value ?? "").replace(/[^\d,.-]/g,"");
+
+  if (s.includes(",")) {
+    s = s.replace(/\./g,"").replace(",",".");
+  } else if (/^-?\d{1,3}(?:\.\d{3})+$/.test(s)) {
+    s = s.replace(/\./g,"");
+  }
+
+  return Number(s) || 0;
+}
+
+function updateDashboard() {
+  data = getFilteredData();
+
+  const models = countBy(data, config.model);
+  const cities = countBy(data, config.city);
+  const years = countBy(data, config.year);
+  const payments = countBy(data, config.pay);
+
+  document.getElementById("totalSales").textContent =
+    data.length.toLocaleString("pt-BR");
+
+  if (config.price) {
+    const revenue = data.reduce((sum,row) =>
+      sum + numeric(row[config.price]), 0);
+
+    document.getElementById("revenue").textContent =
+      money(revenue);
+  } else {
+    document.getElementById("revenue").textContent = "N/D";
+  }
+
+  document.getElementById("topModel").textContent =
+    models[0]?.[0] || "—";
+
+  document.getElementById("topModelDetail").textContent =
+    models[0] ? `${models[0][1]} unidades` : "Sem dados";
+
+  document.getElementById("topCity").textContent =
+    cities[0]?.[0] || "—";
+
+  document.getElementById("topCityDetail").textContent =
+    cities[0] ? `${cities[0][1]} vendas` : "Sem dados";
+
+  renderChart("modelChart", models.slice(0,10), "bar");
+  renderChart("cityChart", cities.slice(0,10), "bar");
+  renderChart("yearChart", years, "bar");
+  renderChart("payChart", payments, "doughnut");
+
+  renderInsights(models, cities, years);
+  renderRanking();
+}
+
+function renderChart(id, entries, type) {
+  if (charts[id]) charts[id].destroy();
+
+  charts[id] = new Chart(document.getElementById(id), {
+    type,
+    data: {
+      labels: entries.map(e => e[0]),
+      datasets: [{
+        data: entries.map(e => e[1]),
+        backgroundColor: type === "doughnut"
+          ? ["#d5001c","#888","#444","#bbb","#666"]
+          : "#d5001c",
+        borderRadius: 3,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:false,
+      indexAxis: id === "modelChart" || id === "cityChart"
+        ? "y":"x",
+      plugins: {
+        legend: {
+          display:type === "doughnut",
+          labels:{color:"#ddd"}
+        }
+      },
+      scales: type === "doughnut" ? {} : {
+        x: {
+          ticks:{color:"#aaa"},
+          grid:{color:"#292929"}
+        },
+        y: {
+          ticks:{color:"#aaa"},
+          grid:{display:false}
+        }
+      }
+    }
+  });
+}
+
+function renderInsights(models,cities,years) {
+  const insights = [];
+
+  if (models.length) {
+    insights.push(`
+      <strong>${escapeHTML(models[0][0])}</strong>
+      é o modelo líder, com ${models[0][1]} unidades vendidas.
+    `);
+  }
+
+  if (years.length) {
+    insights.push(`
+      O Model Year <strong>${escapeHTML(years[0][0])}</strong>
+      apresenta o maior volume, com ${years[0][1]} vendas.
+    `);
+  }
+
+  if (cities.length) {
+    const city = cities[0][0];
+    const localModels = countBy(
+      data.filter(r => r[config.city] === city),
+      config.model
+    );
+
+    insights.push(`
+      Em <strong>${escapeHTML(city)}</strong>,
+      o modelo mais popular é
+      <strong>${escapeHTML(localModels[0]?.[0] || "N/D")}</strong>.
+    `);
+  }
+
+  document.getElementById("insights").innerHTML =
+    insights.map(i => `<div class="insight">${i}</div>`).join("");
+}
+
+function renderRanking() {
+  const grouped = {};
+
+  data.forEach(row => {
+    const city = row[config.city] || "Não informado";
+    const model = row[config.model] || "Não informado";
+
+    grouped[city] ??= {};
+    grouped[city][model] = (grouped[city][model] || 0) + 1;
+  });
+
+  const rows = Object.entries(grouped).map(([city,models]) => {
+    const top = Object.entries(models).sort((a,b)=>b[1]-a[1])[0];
+    return {city, model:top[0], count:top[1]};
+  }).sort((a,b)=>b.count-a.count);
+
+  document.querySelector("#rankingTable tbody").innerHTML =
+    rows.map(r => `
+      <tr style="border-top:1px solid #303030">
+        <td style="padding:15px">${escapeHTML(r.city)}</td>
+        <td>${escapeHTML(r.model)}</td>
+        <td>${r.count}</td>
+      </tr>
+    `).join("") || `<tr><td colspan="3">Sem dados.</td></tr>`;
+}
+
+function resetFilters() {
+  ["model","year","city","pay"].forEach(key => {
+    document.getElementById(key+"Filter").value = "";
+  });
+  updateDashboard();
+}
+
+const demoData = [
+  {Model:"Macan", "Model Year":"2024", City:"São Paulo", "Pay Method":"Financiamento", Price:"480000"},
+  {Model:"Cayenne", "Model Year":"2023", City:"Rio de Janeiro", "Pay Method":"À vista", Price:"720000"},
+  {Model:"Taycan", "Model Year":"2024", City:"Curitiba", "Pay Method":"Financiamento", Price:"650000"},
+  {Model:"911 Carrera", "Model Year":"2025", City:"São Paulo", "Pay Method":"À vista", Price:"1200000"},
+  {Model:"Panamera", "Model Year":"2023", City:"Brasília", "Pay Method":"Financiamento", Price:"830000"},
+  {Model:"Macan", "Model Year":"2023", City:"Belo Horizonte", "Pay Method":"À vista", Price:"455000"},
+  {Model:"Cayenne", "Model Year":"2024", City:"São Paulo", "Pay Method":"Financiamento", Price:"750000"},
+  {Model:"Taycan", "Model Year":"2025", City:"Rio de Janeiro", "Pay Method":"À vista", Price:"680000"},
+  {Model:"Macan", "Model Year":"2025", City:"Curitiba", "Pay Method":"Financiamento", Price:"510000"},
+  {Model:"911 Carrera", "Model Year":"2024", City:"São Paulo", "Pay Method":"Financiamento", Price:"1150000"},
+  {Model:"Panamera", "Model Year":"2025", City:"Porto Alegre", "Pay Method":"À vista", Price:"890000"},
+  {Model:"Macan", "Model Year":"2024", City:"Recife", "Pay Method":"Financiamento", Price:"490000"},
+  {Model:"Cayenne", "Model Year":"2025", City:"Brasília", "Pay Method":"À vista", Price:"780000"},
+  {Model:"Taycan", "Model Year":"2023", City:"Curitiba", "Pay Method":"À vista", Price:"620000"},
+  {Model:"911 Carrera", "Model Year":"2025", City:"Rio de Janeiro", "Pay Method":"Financiamento", Price:"1250000"},
+  {Model:"Panamera", "Model Year":"2024", City:"São Paulo", "Pay Method":"À vista", Price:"860000"},
+  {Model:"Macan", "Model Year":"2025", City:"Rio de Janeiro", "Pay Method":"À vista", Price:"525000"},
+  {Model:"Cayenne", "Model Year":"2023", City:"Belo Horizonte", "Pay Method":"Financiamento", Price:"730000"}
+];
+
+Object.assign(config, {
+  model:"Model",
+  year:"Model Year",
+  city:"City",
+  pay:"Pay Method",
+  price:"Price"
+});
+
+originalData = demoData;
+document.getElementById("fileStatus").textContent =
+  "Amostra fictícia · 18 registros. Importe uma planilha para substituí-la.";
+["model","year","city","pay"].forEach(key => {
+  document.getElementById(key+"Filter").onchange = updateDashboard;
+});
+populateFilters();
+updateDashboard();
+</script>
+</body>
+</html>
