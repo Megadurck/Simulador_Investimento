@@ -36,4 +36,6 @@ Não foi usado ChatGPT com Canvas para gerar esta versão. O HTML existente foi 
 
 O workflow [`../.github/workflows/deploy-dashboard-porsche.yml`](../.github/workflows/deploy-dashboard-porsche.yml) publica o conteúdo desta pasta no GitHub Pages a cada atualização da branch `Dashboard-Porsche`. A página abre com os dados sintéticos e os filtros já disponíveis; por exemplo, selecionar **São Paulo** no filtro **CITY** limita os indicadores e gráficos às vendas fictícias dessa cidade.
 
+![Dashboard com o filtro de São Paulo aplicado](./evidencia-sao-paulo.png)
+
 Para usar dados próprios, selecione **IMPORTAR EXCEL** e escolha uma planilha `.xlsx` ou `.xls`. Não publique planilhas com dados pessoais ou comerciais sensíveis.
