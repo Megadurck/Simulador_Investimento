@@ -1,7 +1,7 @@
 # Dashboard Porsche — Sales Intelligence
 
-- **Dashboard:** [Abrir a dashboard](https://megadurck.github.io/Simulador_Investimento/)
-- **Repositório:** [Megadurck/Simulador_Investimento](https://github.com/Megadurck/Simulador_Investimento)
+- **Dashboard:** [Abrir a dashboard](https://megadurck.github.io/simulador-investimento/)
+- **Repositório:** [Megadurck/simulador-investimento](https://github.com/Megadurck/simulador-investimento)
 - **Branch:** `Dashboard-Porsche`
 
 ## Perguntas de negócio
