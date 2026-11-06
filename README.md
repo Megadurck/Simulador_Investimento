@@ -26,6 +26,7 @@ Cada desafio também possui uma branch independente, permitindo acompanhar seu d
 | Simulador de Investimentos | `./` | `simulador-investimentos` |
 | Declaração de Imposto de Renda | `declaracao-imposto/` | `desafio-declaracao-imposto` |
 | Dashboard Xbox Game Pass | `Dashboard-vendas-Xbox/` | `dashboard-xbox-game-pass` |
+| Dashboard Porsche | `Dashboard-Porsche/` | `Dashboard-Porsche` |
 
 > Novos projetos serão adicionados a esta seção conforme o avanço do bootcamp.
 
